@@ -454,6 +454,7 @@ module "github_webhooks" {
   enabled              = module.this.enabled && var.webhook_enabled ? true : false
   github_repositories  = [var.repo_name]
   github_token         = var.github_oauth_token
+  github_organization  = var.repo_owner
   webhook_url          = local.webhook_url
   webhook_secret       = local.webhook_secret
   webhook_content_type = "json"
