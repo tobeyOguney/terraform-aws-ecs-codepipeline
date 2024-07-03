@@ -447,18 +447,25 @@ resource "aws_codepipeline_webhook" "webhook" {
   }
 }
 
+provider "github" {
+  token  = var.github_oauth_token
+  owner  = var.repo_owner
+}
+
 module "github_webhooks" {
   source  = "cloudposse/repository-webhooks/github"
-  version = "0.12.1"
+  version = "0.14.0"
 
   enabled              = module.this.enabled && var.webhook_enabled ? true : false
   github_repositories  = [var.repo_name]
-  github_token         = var.github_oauth_token
-  github_organization  = var.repo_owner
   webhook_url          = local.webhook_url
   webhook_secret       = local.webhook_secret
   webhook_content_type = "json"
   events               = var.github_webhook_events
 
   context = module.this.context
+
+  providers {
+    github = github
+  }
 }
