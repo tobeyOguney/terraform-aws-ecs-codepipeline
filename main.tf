@@ -18,6 +18,29 @@ resource "aws_s3_bucket" "default" {
   tags          = module.codepipeline_label.tags
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "default" {
+  count         = module.this.enabled ? 1 : 0
+  bucket        = aws_s3_bucket.default.arn
+
+  rule {
+    id     = "expire_artifacts"
+    status = "Enabled"
+
+    expiration {
+      days = 1
+    }
+  }
+
+  rule {
+    id     = "abort_incomplete_multipart_upload"
+    status = "Enabled"
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+  }
+}
+
 module "codepipeline_assume_role_label" {
   source     = "cloudposse/label/null"
   version    = "0.25.0"
