@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "default" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "default" {
   count         = module.this.enabled ? 1 : 0
-  bucket        = aws_s3_bucket.default.arn
+  bucket        = aws_s3_bucket.default[count.index].arn
 
   rule {
     id     = "expire_artifacts"
