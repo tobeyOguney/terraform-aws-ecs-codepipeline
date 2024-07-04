@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "default" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "default" {
   count         = module.this.enabled ? 1 : 0
-  bucket        = aws_s3_bucket.default[count.index].arn
+  bucket        = aws_s3_bucket.default[count.index].id
 
   rule {
     id     = "expire_artifacts"
@@ -263,7 +263,7 @@ module "codebuild" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "codebuild" {
-  bucket        = module.codebuild.cache_bucket_arn
+  bucket        = module.codebuild.cache_bucket_name
 
   rule {
     id     = "expire_artifacts"
