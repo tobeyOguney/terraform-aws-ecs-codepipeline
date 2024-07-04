@@ -262,6 +262,28 @@ module "codebuild" {
   context = module.this.context
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "codebuild" {
+  bucket        = module.codebuild.cache_bucket_arn
+
+  rule {
+    id     = "expire_artifacts"
+    status = "Enabled"
+
+    expiration {
+      days = 1
+    }
+  }
+
+  rule {
+    id     = "abort_incomplete_multipart_upload"
+    status = "Enabled"
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "codebuild_s3" {
   count      = module.this.enabled ? 1 : 0
   role       = module.codebuild.role_id
